@@ -3,6 +3,8 @@ import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import storyRoutes from './routes/storyRoutes.js';
+import { getAvailablePresets } from './utils/fileManager.js';
+
 
 const app = express();
 
@@ -30,3 +32,10 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`✅ Server avviato su http://localhost:${PORT}`);
 });
+
+// 📦 API per ottenere elenco preset disponibili
+app.get('/api/presets', (req, res) => {
+  const presets = getAvailablePresets();
+  res.json(presets);
+});
+

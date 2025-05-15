@@ -39,3 +39,16 @@ export function readJSON(folderPath, fileName) {
   const filePath = path.join(folderPath, fileName);
   return JSON.parse(fs.readFileSync(filePath, 'utf-8'));
 }
+
+// 📦 Leggi tutti i preset disponibili nella cartella public/presets
+export function getAvailablePresets() {
+  const presetsDir = path.join(__dirname, '../../public/presets');
+
+  if (!fs.existsSync(presetsDir)) return [];
+
+  const files = fs.readdirSync(presetsDir);
+  return files
+    .filter(name => name.endsWith('.js'))
+    .map(name => path.basename(name, '.js'));
+}
+

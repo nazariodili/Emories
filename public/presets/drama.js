@@ -1,6 +1,6 @@
-export const dreamyPreset = {
-  name: "dreamy",
-  backgroundPath: "audio/dies_irae_binaural_background.mp3", // temporale
+export const dramaPreset = {
+  name: "drama",
+  backgroundPath: "audio/diesirae_binaural_background.mp3", // temporale
   startDelay: 11,
 
   layers: {
@@ -60,7 +60,7 @@ export const dreamyPreset = {
         curve: "linear",
       },
       spatialization: {
-        enabled: true,
+        enabled: false,
         type: "circular",
         fromAngle: 2,             // parte frontalmente (davanti all'ascoltatore)
         toAngle: 2 + 2 * Math.PI,     // fa un giro completo
@@ -72,7 +72,7 @@ export const dreamyPreset = {
 
     // 🎶 Sottofondo musicale
     background: {
-      volume: -3.5,
+      volume: -20,
       reverb: {
         decay: 6.5,
         wet: 0.5,
@@ -80,7 +80,7 @@ export const dreamyPreset = {
       filter: null,
       automations: [],
       filterAutomation: {
-        enabled: true,
+        enabled: false,
         type: "lowpass",
         fromHz: 20000,
         toHz: 300,
@@ -92,7 +92,7 @@ export const dreamyPreset = {
         enabled: true,
         fromGain: 1.0,
         toGain: 0.001,
-        startAtPercentOfAI: 0.7,
+        startAtPercentOfAI: 0.9,
         endAtPercentOfAI: 0.95,
         curve: "exponential",
       }

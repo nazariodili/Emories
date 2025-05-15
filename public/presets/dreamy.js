@@ -60,7 +60,7 @@ export const dreamyPreset = {
         curve: "linear",
       },
       spatialization: {
-        enabled: true,
+        enabled: false,
         type: "circular",
         fromAngle: 2,             // parte frontalmente (davanti all'ascoltatore)
         toAngle: 2 + 2 * Math.PI,     // fa un giro completo

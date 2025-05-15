@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <title>Registra una nuova storia</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-6 text-gray-800">
+  <div class="max-w-2xl mx-auto">
+    <a href="index.html" class="text-blue-600">← Torna alla home</a>
+    <h1 class="text-2xl font-bold my-4">🎙️ Registra la tua storia</h1>
+
+    <button id="startBtn" class="bg-green-600 text-white px-4 py-2 rounded">Inizia registrazione</button>
+    <button id="stopBtn" disabled class="bg-red-600 text-white px-4 py-2 rounded ml-2">Ferma</button>
+
+    <p class="mt-4" id="status">Stato: pronto</p>
+    <audio id="preview" controls class="mt-4 hidden w-full"></audio>
+
+    <button id="uploadBtn" disabled class="mt-6 bg-blue-600 text-white px-4 py-2 rounded">Invia e crea storia</button>
+  </div>
+
+  <script>
+    let mediaRecorder;
+    let audioChunks = [];
+
+    const startBtn = document.getElementById('startBtn');
+    const stopBtn = document.getElementById('stopBtn');
+    const uploadBtn = document.getElementById('uploadBtn');
+    const status = document.getElementById('status');
+    const preview = document.getElementById('preview');
+
+    startBtn.onclick = async () => {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      mediaRecorder = new MediaRecorder(stream);
+
+      audioChunks = [];
+      mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+
+      mediaRecorder.onstop = () => {
+        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+        const audioUrl = URL.createObjectURL(audioBlob);
+        preview.src = audioUrl;
+        preview.classList.remove('hidden');
+        uploadBtn.disabled = false;
+
+        // Salva blob per invio
+        uploadBtn.blob = audioBlob;
+      };
+
+      mediaRecorder.start();
+      status.innerText = "Stato: registrazione in corso...";
+      startBtn.disabled = true;
+      stopBtn.disabled = false;
+    };
+
+    stopBtn.onclick = () => {
+      mediaRecorder.stop();
+      status.innerText = "Stato: registrazione completata";
+      startBtn.disabled = false;
+      stopBtn.disabled = true;
+    };
+
+    uploadBtn.onclick = async () => {
+      const formData = new FormData();
+      formData.append('audio', uploadBtn.blob, 'recording.webm');
+
+      status.innerText = "Stato: invio in corso...";
+
+      const res = await fetch('/api/stories', {
+        method: 'POST',
+        body: formData
+      });
+
+      const result = await res.json();
+
+      if (res.ok) {
+        window.location.href = `story.html?id=${result.id}`;
+      } else {
+        status.innerText = "Errore nella creazione della storia";
+        console.error(result);
+      }
+    };
+  </script>
+</body>
+</html>

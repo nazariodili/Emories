@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <title>La tua storia</title>
+
+    <!-- 🌐 Tailwind CSS + Tone.js per audio -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tone@latest/build/Tone.js"></script>
+  </head>
+
+  <body class="bg-gray-100 p-6 text-gray-800">
+    <div class="max-w-3xl mx-auto">
+
+      <!-- 🔙 Link per tornare alla home -->
+      <a href="index.html" class="text-blue-600">← Torna alla home</a>
+
+      <!-- 🏷️ Titolo dinamico della storia -->
+      <h1 id="storyTitle" class="text-2xl font-bold mt-4">Caricamento...</h1>
+
+      <!-- 🎛️ CONTROLLI AUDIO -->
+      <div class="flex items-center gap-2 my-4">
+        <button id="playPause" class="px-4 py-2 bg-blue-600 text-white rounded">▶️</button>
+        <button id="seekBack" class="px-2 py-1 bg-gray-200 rounded">⏪ 10s</button>
+        <button id="seekForward" class="px-2 py-1 bg-gray-200 rounded">10s ⏩</button>
+        <input id="timelineSlider" type="range" min="0" value="0" step="0.01" class="w-full mx-2" />
+        <span id="currentTime" class="text-sm">00:00</span>
+        <span id="remainingTime" class="text-sm text-gray-500">–00:00</span>
+      </div>
+
+      <!-- 🎚️ SELECT PRESET -->
+      <label for="presetSelect" class="block mb-2 text-sm">Preset audio:</label>
+      <select id="presetSelect" class="mb-4 p-2 border rounded">
+        <option value="dreamy">dreamy</option>
+        <!-- altri preset possono essere aggiunti qui -->
+      </select>
+
+      <!-- 📜 TESTO NARRATO SINCRONIZZATO -->
+      <div
+        id="storyText"
+        class="whitespace-pre-line text-lg bg-white p-4 rounded shadow max-h-[400px] overflow-y-auto"
+      ></div>
+    </div>
+
+    <!-- 🔌 JS MODULE: carica tutto in modo asincrono -->
+    <script type="module">
+      import { setupNarrationSequenceToneJS } from "./audioEngine.js";
+      import { setupSyncText } from "./syncText.js";
+
+      // 📦 Recupera l'ID storia dall'URL
+      const storyId = new URLSearchParams(location.search).get("id");
+
+      // 📥 Carica metadati e transcript della storia
+      const metadata = await fetch(`/api/stories/${storyId}`).then(res => res.json());
+      const transcript = await fetch(`/stories/${storyId}/transcript.json`).then(res => res.json());
+
+      // 🏷️ Mostra il titolo nel DOM
+      document.getElementById("storyTitle").innerText = metadata.title || "Senza titolo";
+
+      // 🎚️ Imposta il preset selezionato nei metadati
+      const presetSelect = document.getElementById("presetSelect");
+      presetSelect.value = metadata.preset || "dreamy";
+
+      // 📦 Carica il modulo preset (es: dreamy.js)
+      const presetModule = await import(`./presets/${presetSelect.value}.js`);
+      const preset = presetModule[`${presetSelect.value}Preset`];
+      const startDelay = preset.startDelay ?? 0;
+
+      // 📖 Avvia sincronizzazione testo con offset della voce AI
+      setupSyncText("storyText", transcript.segments, startDelay);
+
+      // 🎵 Avvia sistema audio multitraccia con Tone.js
+      setupNarrationSequenceToneJS(storyId);
+    </script>
+  </body>
+</html>

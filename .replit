@@ -1,4 +1,7 @@
-entrypoint = "index.js"
+# Avvia il backend Express dal file indicato in package.json (npm start)
+run = "npm start"
+entrypoint = "server/index.js"
+
 modules = ["nodejs-22"]
 hidden = [".config", "package-lock.json"]
 
@@ -7,8 +10,13 @@ requiredFiles = [".replit", "replit.nix", "package.json", "package-lock.json"]
 
 [nix]
 channel = "stable-24_11"
+packages = ["ffmpeg", "psmisc"]
 
 [deployment]
-run = ["node", "index.js"]
+run = "node server/index.js"
 deploymentTarget = "autoscale"
 ignorePorts = false
+
+[[ports]]
+localPort = 3000
+externalPort = 80

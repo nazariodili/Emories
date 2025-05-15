@@ -52,62 +52,90 @@
 
     <!-- 🔌 JS MODULE: carica tutto in modo asincrono -->
     <script type="module">
-      import { destroyPreviousMix, setupNarrationSequenceToneJS } from "./audioEngine.js";
+      import {
+        destroyPreviousMix,
+        setupNarrationSequenceToneJS,
+      } from "./audioEngine.js";
       import { setupSyncText } from "./syncText.js";
 
-      // 📦 Recupera l'ID storia dall'URL
       const storyId = new URLSearchParams(location.search).get("id");
-
-      // 📥 Carica metadati e transcript della storia
-      const metadata = await fetch(`/api/stories/${storyId}`).then((res) => res.json());
-      const transcript = await fetch(`/stories/${storyId}/transcript.json`).then((res) => res.json());
-
-      // 🏷️ Mostra il titolo nel DOM
-      document.getElementById("storyTitle").innerText = metadata.title || "Senza titolo";
-
-      // 🎚️ Carica la lista dei preset disponibili
+      const storyTextDiv = document.getElementById("storyText");
       const presetSelect = document.getElementById("presetSelect");
-      const presetList = await fetch("/api/presets").then((res) => res.json());
+      const storyTitle = document.getElementById("storyTitle");
 
-      // 🧩 Popola la select dinamicamente
-      presetList.forEach((presetName) => {
+      const metadata = await fetch(`/api/stories/${storyId}`).then((res) =>
+        res.json(),
+      );
+      const allPresets = await fetch("/api/presets").then((res) => res.json());
+      const generatedPresets = await fetch(
+        `/api/stories/${storyId}/versions`,
+      ).then((res) => res.json());
+
+      // 🧩 Costruisci <select> con indicazione se generato
+      presetSelect.innerHTML = "";
+      allPresets.forEach((presetName) => {
         const option = document.createElement("option");
         option.value = presetName;
-        option.textContent = presetName;
+        const alreadyGenerated = generatedPresets.includes(presetName);
+        option.textContent = alreadyGenerated
+          ? `✔️ ${presetName}`
+          : `🛠 ${presetName}`;
         presetSelect.appendChild(option);
       });
 
-      // 🎯 Imposta il preset attuale da metadata, con fallback
-      const selectedPreset =
-        metadata.preset && presetList.includes(metadata.preset)
+      // ⬇️ Default: dreamy se disponibile
+      const initialPreset =
+        metadata.preset && allPresets.includes(metadata.preset)
           ? metadata.preset
           : "dreamy";
-      presetSelect.value = selectedPreset;
+      presetSelect.value = initialPreset;
+      storyTitle.innerText = metadata.title || "Senza titolo";
 
-      // 🔄 Funzione per caricare preset, sincronizzazione e audio
+      // 🔄 Caricamento di una versione
       async function loadPresetAndStart(presetName) {
-        destroyPreviousMix(); // 🧼 Reset prima del nuovo mix
+        destroyPreviousMix();
+        storyTextDiv.innerText = "⏳ Caricamento...";
 
+        const presetAudioPath = `/stories/${storyId}/preset_${presetName}/voce_ai.mp3`;
+        const audioExists = await fetch(presetAudioPath, { method: "HEAD" })
+          .then((r) => r.ok)
+          .catch(() => false);
+
+        // 🛠 Genera se necessario
+        if (!audioExists) {
+          storyTextDiv.innerText = "🔁 Generazione nuova versione...";
+          const res = await fetch(
+            `/api/stories/${storyId}/generate-version/${presetName}`,
+            { method: "POST" },
+          );
+          if (!res.ok) {
+            storyTextDiv.innerText = "❌ Errore durante la generazione.";
+            return;
+          }
+          storyTextDiv.innerText = "✅ Generato. Caricamento in corso...";
+          await new Promise((resolve) => setTimeout(resolve, 800));
+        }
+
+        // 🧠 Importa preset
         const presetModule = await import(`./presets/${presetName}.js`);
         const preset = presetModule[`${presetName}Preset`];
         const startDelay = preset.startDelay ?? 0;
 
-        // 📝 Sincronizza testo narrato
+        const transcript = await fetch(
+          `/stories/${storyId}/preset_${presetName}/transcript.json`,
+        ).then((res) => res.json());
         setupSyncText("storyText", transcript.segments, startDelay);
-
-        // 🎧 Avvia audio con Tone.js
         setupNarrationSequenceToneJS(storyId, preset);
       }
 
-      // ▶️ Avvio iniziale
-      await loadPresetAndStart(selectedPreset);
+      // ▶️ Avvia preset iniziale
+      await loadPresetAndStart(initialPreset);
 
-      // 🔁 Cambio preset dinamico (una sola volta, qui sotto correttamente)
+      // 🔁 Cambio preset
       presetSelect.addEventListener("change", async (e) => {
         const newPreset = e.target.value;
         await loadPresetAndStart(newPreset);
       });
-
     </script>
   </body>
 </html>

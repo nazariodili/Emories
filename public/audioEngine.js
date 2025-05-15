@@ -50,7 +50,9 @@
 
       const startDelay = preset.startDelay ?? 0;
       const { userVoice, aiVoice, background } = preset.layers;
-      const basePath = `/stories/${storyId}/`;
+      const basePresetPath = `/stories/${storyId}/preset_${preset.name}/`;  // per voce_ai e transcript
+      const baseStoryPath = `/stories/${storyId}/`; // per voce utente
+
       const activeFilters = [];
       let aiDuration = 0;
 
@@ -174,7 +176,7 @@
 
       // === 🎤 Voce utente
       const voceUtente = await setupLayerPlayer({
-        file: basePath + "voce_utente_trimmed.mp3",
+        file: baseStoryPath + "voce_utente_trimmed.mp3",
         startTime: 0,
         config: userVoice,
       });
@@ -182,7 +184,7 @@
 
       // === 🧠 Voce AI
       const voceAI = await setupLayerPlayer({
-        file: basePath + "voce_ai.mp3",
+        file: basePresetPath + "voce_ai.mp3",
         startTime: startDelay,
         config: aiVoice,
       });

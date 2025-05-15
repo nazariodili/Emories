@@ -5,23 +5,23 @@ import dotenv from "dotenv";
 dotenv.config();
 
 /**
- * Converte un testo in voce sintetica e salva il file mp3.
+ * Converte un testo in voce sintetica basandosi sui parametri di generazione del preset.
  * 
- * @param {string} text - Testo da sintetizzare
- * @param {string} outputFolderPath - Cartella di output (es. story_003)
- * @param {string} fileName - Nome del file da salvare (default: voce_ai.mp3)
- * @param {string} voice - Voce TTS da usare (default: nova)
- * @returns {Promise<string>} - Path completo del file generato
+ * @param {string} text - Testo da sintetizzare (la microstoria)
+ * @param {string} outputFolderPath - Cartella in cui salvare il file
+ * @param {object} generation - Oggetto preset.generation con { voice, voicePrompt }
+ * @param {string} fileName - (opzionale) Nome file (default: voce_ai.mp3)
+ * @returns {Promise<Buffer>} - Audio mp3 come Buffer (e salvato su disco)
  */
 export async function synthesizeVoiceFromText(
   text,
   outputFolderPath,
-  fileName = "voce_ai.mp3",
-  voice = "shimmer",
-  instructions = "Affect/personality: You're a audiobook narrator with soft, introspective, and intimate interpretation; convey a sense of wonder and emotional depth.\n\nTone: Friendly, clear, and reassuring, creating a calm atmosphere, making the listener feel confident and comfortable and warm—imbued with gentle melancholy and tender hope\n\nPacing: Give each phrase time to breathe, inviting the listener to linger inside the memory.\n\nPronunciation: Clear, articulate, and steady, ensuring each instruction is easily understood while maintaining a natural, conversational flow.\n\nPause: Brief, purposeful pauses after key instructions (e.g., \"cross the street\" and \"turn right\") to allow time for the listener to process the information and follow along.\n\nEmotion: Warm and supportive, conveying empathy and care, ensuring the listener feels guided and safe throughout the journey. Heartfelt emotion with an undercurrent of longing."
+  generation,
+  fileName = "voce_ai.mp3"
 ) {
   const outputPath = path.join(outputFolderPath, fileName);
-  
+  const voice = generation.voice || "shimmer";
+  const instructions = generation.voicePrompt || "";
 
   try {
     const response = await fetch("https://api.openai.com/v1/audio/speech", {
@@ -45,11 +45,11 @@ export async function synthesizeVoiceFromText(
       throw new Error(`Errore nella sintesi vocale: ${error}`);
     }
 
-    const audioBuffer = await response.arrayBuffer();
-    fs.writeFileSync(outputPath, Buffer.from(audioBuffer));
+    const audioBuffer = Buffer.from(await response.arrayBuffer());
+    fs.writeFileSync(outputPath, audioBuffer);
 
-    console.log("🗣️ Voce TTS salvata in:", outputPath);
-    return outputPath;
+    console.log("🗣️ Voce AI salvata in:", outputPath);
+    return audioBuffer;
   } catch (err) {
     console.error("❌ Errore in synthesizeVoiceFromText:", err);
     throw err;

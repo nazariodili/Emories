@@ -5,22 +5,19 @@ import dotenv from "dotenv";
 dotenv.config();
 
 /**
- * Genera una microstoria narrativa da una trascrizione vocale.
- * Salva il risultato in "testo.txt" nella cartella della storia.
- * 
- * @param {string} transcriptionText - Il testo trascritto (grezzo)
- * @param {string} outputFolderPath - Dove salvare la microstoria
+ * @param {string} transcriptionText - Testo trascritto
+ * @param {string} outputFolderPath - Dove salvare "testo.txt"
  * @param {string} model - (facoltativo) Modello GPT da usare
+ * @param {string} customPrompt - (facoltativo) Prompt personalizzato da preset
  * @returns {Promise<string>} - Testo della microstoria
  */
-export async function generateNarrativeFrom(transcriptionText, outputFolderPath, model = "gpt-4") {
-  const prompt = `
+export async function generateNarrativeFrom(transcriptionText, outputFolderPath, model = "gpt-4", customPrompt) {
+  const prompt = customPrompt || `
 Prendi il testo seguente, che è la trascrizione fedele di una registrazione personale.
 Riscrivilo come una breve microstoria da leggere ad alta voce.
 Mantieni tutti i contenuti reali, senza inventare nulla.
 Usa uno stile narrativo cinematografico, coinvolgente, come in un audiolibro, ispirandoti a Andi Arndt o Cassandra Campbell.
-
-Non inserire mai prima del testo un prefisso come "Ecco la tua microstoria:" o "Ecco la tua storia:" o "Racconto rivisitato"
+Non inserire mai prefissi tipo "Ecco la tua storia:".
 
 Testo originale:
 """${transcriptionText}"""
@@ -37,7 +34,7 @@ Testo originale:
       messages: [
         {
           role: "system",
-          content: "Sei un narratore che trasforma registrazioni personali in narrazione da ascolto ricca di emozioni vere, non finte o forza. Non devi inventare nulla."
+          content: "Sei un narratore che trasforma registrazioni personali in storie da ascoltare, senza inventare nulla."
         },
         {
           role: "user",
@@ -57,12 +54,9 @@ Testo originale:
   }
 
   const microstory = data.choices[0].message.content.trim();
-  console.log("📖 Microstoria GPT generata:", microstory.slice(0, 100) + "...");
-
-  // 💾 Salva anche in file locale
   const textPath = path.join(outputFolderPath, "testo.txt");
   fs.writeFileSync(textPath, microstory, "utf-8");
-  console.log(`💾 Microstoria salvata in ${textPath}`);
 
+  console.log("📖 Microstoria generata:", microstory.slice(0, 100) + "...");
   return microstory;
 }

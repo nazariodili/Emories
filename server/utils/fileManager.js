@@ -42,7 +42,7 @@ export function readJSON(folderPath, fileName) {
 
 // 📦 Leggi tutti i preset disponibili nella cartella public/presets
 export function getAvailablePresets() {
-  const presetsDir = path.join(__dirname, '../../public/presets');
+  const presetsDir = path.join(__dirname, '../../presets');
 
   if (!fs.existsSync(presetsDir)) return [];
 

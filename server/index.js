@@ -24,6 +24,10 @@ app.use('/stories', express.static(path.join(__dirname, '../stories')));
 // Routing
 app.use('/api/stories', storyRoutes);
 
+// serve static files for presets
+app.use('/presets', express.static(path.join(__dirname, '../presets')));
+
+
 app.get('/api/ping', (req, res) => {
   res.json({ status: 'ok', message: 'API attiva' });
 });

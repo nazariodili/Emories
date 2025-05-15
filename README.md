@@ -38,6 +38,11 @@ Questa versione aggiornata dell'app **Emories multistoria** supporta:
 
 ## 🔧 Fix tecnici recenti
 
+### ✅Generaione storie multi preset
+- Bug da risolvere:
+  - Accertarsi che dal file del preset viene mandata la trascrizione della voce registrata: Sembra che il preset drama sia sconnesso. Probabilmente anche il preset dreamy -> Credo che il fallback dentro il generateStory faccia si che la storia di dreamy sia coerente con la registrazione, ma non il preset.
+
+
 ### ✅ Scroll sincronizzato perfetto
 - Scroll centrato **solo se la riga attiva cambia**
 - Funziona **sia avanti che indietro** nella timeline
@@ -92,6 +97,8 @@ Questa versione aggiornata dell'app **Emories multistoria** supporta:
 - [x] Aggiunta spazializzazione della voce AI
 - [x] Prompt ottimizzato per voce narrante emozionale
 - [x] Supporto a background binaurali
+- [ ] Accertarsi che dal file del preset viene mandata la trascrizione della voce registrata: Sembra che il preset drama sia sconnesso. Probabilmente anche il preset dreamy -> Credo che il fallback dentro il generateStory faccia si che la storia di dreamy sia coerente con la registrazione, ma non il preset.
+- [ ] Il text sync non funziona perchè nel transcript non vengono separati i segments -> basarsi su logiche di funzionanmento precedente 
 - [ ] Migliorare la voce registrata da utente
 - [ ] Migliorare narrazione e testo generato
 - [ ] Aumentare l’effetto emozionale dell’esperienza audio

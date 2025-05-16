@@ -1,0 +1,70 @@
+{
+  "task": "transcribe",
+  "language": "italian",
+  "duration": 8.640000343322754,
+  "text": "proprio tutti i moduli, poi per i resti invece di altre utenze al massimo lettura e scrittura, nessun'altra.",
+  "segments": [
+    {
+      "id": 0,
+      "seek": 0,
+      "start": 0,
+      "end": 7.119999885559082,
+      "text": " proprio tutti i moduli, poi per i resti invece di altre utenze al massimo lettura e scrittura,",
+      "tokens": [
+        50364,
+        28203,
+        19822,
+        741,
+        1072,
+        25484,
+        11,
+        19260,
+        680,
+        741,
+        1472,
+        72,
+        36344,
+        1026,
+        34983,
+        2839,
+        268,
+        1381,
+        419,
+        2758,
+        6934,
+        20689,
+        2991,
+        308,
+        5918,
+        593,
+        2991,
+        11,
+        50720
+      ],
+      "temperature": 0,
+      "avg_logprob": -0.583773672580719,
+      "compression_ratio": 1.2272727489471436,
+      "no_speech_prob": 0.04015640169382095
+    },
+    {
+      "id": 1,
+      "seek": 0,
+      "start": 7.119999885559082,
+      "end": 7.840000152587891,
+      "text": " nessun'altra.",
+      "tokens": [
+        50720,
+        39787,
+        409,
+        6,
+        38865,
+        13,
+        50756
+      ],
+      "temperature": 0,
+      "avg_logprob": -0.583773672580719,
+      "compression_ratio": 1.2272727489471436,
+      "no_speech_prob": 0.04015640169382095
+    }
+  ]
+}

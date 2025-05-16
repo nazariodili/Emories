@@ -3,13 +3,17 @@ export const dreamyPreset = {
   backgroundPath: "/audio/sottofondo_preset1.mp3", // chitarra
   startDelay: 11,
   generation: {
-    storyPrompt: `Prendi il testo seguente, che è la trascrizione fedele di una registrazione personale. 
-    
-    Riscrivilo come una breve microstoria da leggere ad alta voce. Mantieni tutti i contenuti reali, senza inventare nulla. 
-    
-    Usa uno stile narrativo cinematografico, coinvolgente, come in un audiolibro, ispirandoti a Andi Arndt o Cassandra Campbell. 
-    
-    Non inserire mai prima del testo un prefisso come "Ecco la tua microstoria:" o "Ecco la tua storia:" o "Racconto rivisitato"`,
+  storyPrompt: (transcriptionText) => `Prendi il testo seguente, che è la trascrizione fedele di una registrazione personale. 
+
+  Riscrivilo come una breve microstoria da leggere ad alta voce. Mantieni tutti i contenuti reali, senza inventare nulla. 
+
+  Usa uno stile narrativo cinematografico, coinvolgente, come in un audiolibro, ispirandoti a Andi Arndt o Cassandra Campbell. 
+
+  Non inserire mai prima del testo un prefisso come "Ecco la tua microstoria:" o "Ecco la tua storia:" o "Racconto rivisitato".
+
+  Testo originale:
+  """${transcriptionText}"""`,
+
     voicePrompt: `Affect/personality: You're a audiobook narrator with soft, introspective, and intimate interpretation; convey a sense of wonder and emotional depth.\n\nTone: Friendly, clear, and reassuring, creating a calm atmosphere, making the listener feel confident and comfortable and warm—imbued with gentle melancholy and tender hope\n\nPacing: Give each phrase time to breathe, inviting the listener to linger inside the memory.\n\nPronunciation: Clear, articulate, and steady, ensuring each instruction is easily understood while maintaining a natural, conversational flow.\n\nPause: Brief, purposeful pauses after key instructions (e.g., \"cross the street\" and \"turn right\") to allow time for the listener to process the information and follow along.\n\nEmotion: Warm and supportive, conveying empathy and care, ensuring the listener feels guided and safe throughout the journey. Heartfelt emotion with an undercurrent of longing."`,
     voice: "shimmer"
   },

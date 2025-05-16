@@ -4,13 +4,8 @@ import fetch from "node-fetch";
 import dotenv from "dotenv";
 dotenv.config();
 
-/**
- * @param {string} transcriptionText - Testo trascritto
- * @param {string} outputFolderPath - Dove salvare "testo.txt"
- * @param {string} model - (facoltativo) Modello GPT da usare
- * @param {string} customPrompt - (facoltativo) Prompt personalizzato da preset
- * @returns {Promise<string>} - Testo della microstoria
- */
+
+
 export async function generateNarrativeFrom(transcriptionText, outputFolderPath, model = "gpt-4", customPrompt) {
   const prompt = customPrompt || `
 Prendi il testo seguente, che è la trascrizione fedele di una registrazione personale.
@@ -22,6 +17,9 @@ Non inserire mai prefissi tipo "Ecco la tua storia:".
 Testo originale:
 """${transcriptionText}"""
 `;
+
+  // DEBUG: prompt effettivo
+  console.log("🚩 PROMPT FINALE PASSATO A GPT:", prompt);
 
   const response = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
@@ -46,6 +44,7 @@ Testo originale:
     })
   });
 
+
   const data = await response.json();
 
   if (!response.ok) {
@@ -53,10 +52,13 @@ Testo originale:
     throw new Error(data.error?.message || "Errore sconosciuto");
   }
 
+  // DEBUG: risposta API
+  console.log("🔄 RISPOSTA GPT:", data);
+
   const microstory = data.choices[0].message.content.trim();
   const textPath = path.join(outputFolderPath, "testo.txt");
   fs.writeFileSync(textPath, microstory, "utf-8");
 
-  console.log("📖 Microstoria generata:", microstory.slice(0, 100) + "...");
+  console.log("📖 Microstoria generata (sintesi):", microstory.slice(0, 100) + "...");
   return microstory;
 }

@@ -38,24 +38,22 @@ Questa versione aggiornata dell'app **Emories multistoria** supporta:
 
 ## 🔧 Fix tecnici recenti
 
-### ✅Generaione storie multi preset
-- Bug da risolvere:
-  - Accertarsi che dal file del preset viene mandata la trascrizione della voce registrata: Sembra che il preset drama sia sconnesso. Probabilmente anche il preset dreamy -> Credo che il fallback dentro il generateStory faccia si che la storia di dreamy sia coerente con la registrazione, ma non il preset.
-
+### ✅ Generazione storie multi-preset
+- **Bug noto**: Accertarsi che dal file preset venga passata sempre la trascrizione utente corretta alla funzione di generazione storia (es. preset drama ancora da fixare, dreamy ora funziona).
+- **Prompt dinamico**: Tutti i preset devono usare la funzione `storyPrompt(transcriptionText)` per garantire la coerenza tra storia generata e registrazione.
 
 ### ✅ Scroll sincronizzato perfetto
 - Scroll centrato **solo se la riga attiva cambia**
-- Funziona **sia avanti che indietro** nella timeline
+- Funziona sia avanti che indietro nella timeline
 - Usa `getBoundingClientRect()` per calcolo preciso
 - Scorrimento morbido personalizzato (`easeInOutQuad`)
 
 ### ✅ Aggiunta spatializzazione AI
-- Effetto binaurale ottenuto tramite `Tone.Panner3D` (HRTF)
+- Effetto binaurale tramite `Tone.Panner3D` (HRTF)
 - Movimento circolare controllato da preset (startAngle, endAngle, radius)
 
 ### ✅ Prompt ottimizzato per TTS
-- File `synthesizeVoice.js` include ora `instructions` dettagliate:
-  > "You're an audiobook narrator with soft, introspective, and intimate interpretation; convey a sense of wonder and emotional depth..."
+- Il file `synthesizeVoice.js` ora include istruzioni dettagliate per voce emozionale.
 
 ---
 
@@ -63,31 +61,45 @@ Questa versione aggiornata dell'app **Emories multistoria** supporta:
 
 ```
 /public/
-  index.html
-  story.html
-  registrazione.html
-  presets/dreamy.js
-  audioEngine.js
-  syncText.js
+   index.html
+   story.html
+   registrazione.html
+   record.js
+   audioEngine.js
+   syncText.js
 
 /server/
-  index.js
-  routes/storyRoutes.js
-  modules/
-    transcribe.js
-    generateStory.js
-    synthesizeVoice.js
-    generateTranscriptFromAudio.js
-    extractVoiceSnippet.js
-  utils/fileManager.js
+   index.js
+   routes/storyRoutes.js
+   modules/
+      transcribe.js
+      generateStory.js
+      generateTitle.js
+      synthesizeVoice.js
+      generateTranscriptFromAudio.js
+      extractVoiceSnippet.js
+   utils/
+      fileManager.js
+      generateStoryFromPreset.js
 
-/stories/
-  story_001/
-    audio_utente.webm
-    voce_utente_trimmed.mp3
-    voce_ai.mp3
-    transcript.json
-    metadata.json
+presets/
+   dreamy.js
+   drama.js
+
+stories/
+   story_001/
+      preset_dreamy/
+      testo.txt
+      transcript.json
+      trascrizione.txt
+      voce_ai.mp3
+   audio_utente.webm
+   audio_utente.mp3
+   voce_utente_trimmed.mp3
+   transcript.json
+   metadata.json
+   titolo.txt
+   trascrizione.txt
 ```
 
 ---
@@ -97,12 +109,12 @@ Questa versione aggiornata dell'app **Emories multistoria** supporta:
 - [x] Aggiunta spazializzazione della voce AI
 - [x] Prompt ottimizzato per voce narrante emozionale
 - [x] Supporto a background binaurali
-- [ ] Accertarsi che dal file del preset viene mandata la trascrizione della voce registrata: Sembra che il preset drama sia sconnesso. Probabilmente anche il preset dreamy -> Credo che il fallback dentro il generateStory faccia si che la storia di dreamy sia coerente con la registrazione, ma non il preset.
-- [ ] Il text sync non funziona perchè nel transcript non vengono separati i segments -> basarsi su logiche di funzionanmento precedente 
+- [ ] Accertarsi che ogni preset mandi sempre la trascrizione corretta
+- [ ] Fix segmenti transcript per text sync (verificare struttura)
 - [ ] Migliorare la voce registrata da utente
 - [ ] Migliorare narrazione e testo generato
 - [ ] Aumentare l’effetto emozionale dell’esperienza audio
-- [ ] Creare un nuovo preset alternativo
+- [ ] Creare nuovi preset alternativi (ASMR, docu, drama...)
 - [ ] Ottimizzare performance complessive
 
 ---
@@ -123,21 +135,21 @@ Prossimi obiettivi: migliorare la qualità emotiva della voce utente, arricchire
 2. Carica tutti i file del progetto (es. ZIP completo)
 3. Installa le dipendenze:
 
-```
-npm install express openai node-fetch formidable
-```
+   ```
+   npm install express openai node-fetch formidable
+   ```
 
-4. Verifica che esista un file `.env` con la tua chiave:
+4. Verifica che esista un file `.env` con la tua chiave OpenAI:
 
-```
-OPENAI_API_KEY=sk-xxxxxxxx
-```
+   ```
+   OPENAI_API_KEY=sk-xxxxxxxx
+   ```
 
 5. Avvia il progetto:
 
-```
-npm start
-```
+   ```
+   npm start
+   ```
 
 6. Visita l’URL generato da Replit per usare l’app
 

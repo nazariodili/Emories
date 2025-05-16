@@ -109,8 +109,8 @@ stories/
 - [x] Aggiunta spazializzazione della voce AI
 - [x] Prompt ottimizzato per voce narrante emozionale
 - [x] Supporto a background binaurali
-- [ ] Accertarsi che ogni preset mandi sempre la trascrizione corretta
-- [ ] Fix segmenti transcript per text sync (verificare struttura)
+- [x] Accertarsi che ogni preset mandi sempre la trascrizione corretta
+- [x] Fix segmenti transcript per text sync (verificare struttura)
 - [ ] Migliorare la voce registrata da utente
 - [ ] Migliorare narrazione e testo generato
 - [ ] Aumentare l’effetto emozionale dell’esperienza audio

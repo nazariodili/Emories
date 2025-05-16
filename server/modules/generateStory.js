@@ -4,10 +4,15 @@ import fetch from "node-fetch";
 import dotenv from "dotenv";
 dotenv.config();
 
-
-
-export async function generateNarrativeFrom(transcriptionText, outputFolderPath, model = "gpt-4", customPrompt) {
-  const prompt = customPrompt || `
+export async function generateNarrativeFrom(
+  transcriptionText,
+  outputFolderPath,
+  model = "gpt-4",
+  customPrompt,
+) {
+  const prompt =
+    customPrompt ||
+    `
 Prendi il testo seguente, che è la trascrizione fedele di una registrazione personale.
 Riscrivilo come una breve microstoria da leggere ad alta voce.
 Mantieni tutti i contenuti reali, senza inventare nulla.
@@ -25,25 +30,25 @@ Testo originale:
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${process.env.OPENAI_API_KEY}`
+      Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
     },
     body: JSON.stringify({
       model,
       messages: [
         {
           role: "system",
-          content: "Sei un narratore che trasforma registrazioni personali in storie da ascoltare, senza inventare nulla."
+          content:
+            "Sei un narratore che trasforma registrazioni personali in audio storie da ascoltare di max 1minuto w 30 secondi. Inserisci degli elementi che supportano la qualità della lettura dell'audio storia, senza inventare nulla. Se noti degli errori nel testo, correggili (per es: cagnodina correggilo in cagnolina)",
         },
         {
           role: "user",
-          content: prompt
-        }
+          content: prompt,
+        },
       ],
       temperature: 0.7,
-      max_tokens: 1000
-    })
+      max_tokens: 600,
+    }),
   });
-
 
   const data = await response.json();
 
@@ -59,6 +64,9 @@ Testo originale:
   const textPath = path.join(outputFolderPath, "testo.txt");
   fs.writeFileSync(textPath, microstory, "utf-8");
 
-  console.log("📖 Microstoria generata (sintesi):", microstory.slice(0, 100) + "...");
+  console.log(
+    "📖 Microstoria generata (sintesi):",
+    microstory.slice(0, 100) + "...",
+  );
   return microstory;
 }

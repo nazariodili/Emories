@@ -1,14 +1,25 @@
 export const dramaPreset = {
   name: "drama",
   backgroundPath: "audio/diesirae_binaural_background.mp3", // drama music
-  startDelay: 11,
-
+  startDelay: 10,
   generation: {
     storyPrompt: (
       transcriptionText,
-    ) => `Prendi il testo seguente, che è la trascrizione fedele di una registrazione personale. 
+      language,
+    ) => `
+    ATTENZIONE: Tutte le istruzioni seguenti sono OBBLIGATORIE.
+
+    DEVI scrivere la microstoria ESCLUSIVAMENTE nella lingua "${language}" (codice ISO). 
+    Ignora la lingua di questo prompt, non usare mai l'italiano nelle tue risposte a meno che "${language}" non sia "it".
+    NON TRADURRE la storia in nessun'altra lingua, non rispondere mai in italiano o in inglese se non richiesto da "${language}".
+
+    Prendi il testo seguente, che è la trascrizione fedele di una registrazione personale. 
     Riscrivilo come una microstoria intensa, drammatica, tensione alle stelle con sottofondo musicale del Dies Irae come se fosse il momento clou di un film di guerra. Così esagerato tale da far ridere chi ascolta la storia.
-    Mantieni rigorosamente ogni dettaglio reale, ma usa uno stile narrativo profondo, con pause, tensione e introspezione. Ispirati ai monologhi interiori nei film di Paolo Sorrentino, Alejandro González Iñárritu o nel film Napoleon. Non aggiungere prefissi come "Ecco la storia" o "Racconto rivisitato", inizia direttamente con la narrazione in terza persona.
+    Mantieni rigorosamente ogni dettaglio reale, ma usa uno stile narrativo profondo, con pause, tensione e introspezione. Ispirati ai monologhi interiori nei film di Paolo Sorrentino, Alejandro González Iñárritu o nel film Napoleon. 
+
+    NON aggiungere prefissi come “Ecco la storia” o “Racconto rivisitato”, inizia direttamente la narrazione.
+
+    Scrivi solo la storia, senza alcun commento o spiegazione.
 
 Testo originale:
 """${transcriptionText}"""`,
@@ -21,10 +32,7 @@ Testo originale:
 
     Volume: Booming, echoing, rumbling with thunder.`,
 
-
-
-
-    voice: "ash", 
+    voice: "ash",
   },
 
   layers: {
@@ -88,7 +96,7 @@ Testo originale:
 
     // 🎶 Sottofondo musicale
     background: {
-      volume: -7,
+      volume: -14,
       reverb: {
         decay: 6.5,
         wet: 0.5,

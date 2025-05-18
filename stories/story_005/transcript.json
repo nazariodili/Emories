@@ -1,0 +1,48 @@
+{
+  "task": "transcribe",
+  "language": "english",
+  "duration": 8.460000038146973,
+  "text": "Three years ago I met Andrea at the Masters. We love to spend time together, now next year we are getting married.",
+  "segments": [
+    {
+      "id": 0,
+      "seek": 0,
+      "start": 0,
+      "end": 8,
+      "text": " Three years ago I met Andrea at the Masters. We love to spend time together, now next year we are getting married.",
+      "tokens": [
+        50364,
+        6244,
+        924,
+        2057,
+        286,
+        1131,
+        24215,
+        412,
+        264,
+        27014,
+        13,
+        492,
+        959,
+        281,
+        3496,
+        565,
+        1214,
+        11,
+        586,
+        958,
+        1064,
+        321,
+        366,
+        1242,
+        5259,
+        13,
+        50764
+      ],
+      "temperature": 0,
+      "avg_logprob": -0.40105536580085754,
+      "compression_ratio": 1.163265347480774,
+      "no_speech_prob": 0.05358251556754112
+    }
+  ]
+}

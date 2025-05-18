@@ -1,0 +1,48 @@
+{
+  "task": "transcribe",
+  "language": "english",
+  "duration": 11.460000038146973,
+  "text": "Once I met Andrea at the Master 3 years ago, now we live together and we are going to get married next year.",
+  "segments": [
+    {
+      "id": 0,
+      "seek": 0,
+      "start": 0,
+      "end": 11.5,
+      "text": " Once I met Andrea at the Master 3 years ago, now we live together and we are going to get married next year.",
+      "tokens": [
+        50364,
+        3443,
+        286,
+        1131,
+        24215,
+        412,
+        264,
+        6140,
+        805,
+        924,
+        2057,
+        11,
+        586,
+        321,
+        1621,
+        1214,
+        293,
+        321,
+        366,
+        516,
+        281,
+        483,
+        5259,
+        958,
+        1064,
+        13,
+        50939
+      ],
+      "temperature": 0,
+      "avg_logprob": -0.45072469115257263,
+      "compression_ratio": 1.136842131614685,
+      "no_speech_prob": 0.01892210729420185
+    }
+  ]
+}

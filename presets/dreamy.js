@@ -1,21 +1,31 @@
 export const dreamyPreset = {
   name: "dreamy",
   backgroundPath: "/audio/sottofondo_preset1.mp3", // chitarra
-  startDelay: 11,
+  startDelay: 10,
   generation: {
-  storyPrompt: (transcriptionText) => `Prendi il testo seguente, che è la trascrizione fedele di una registrazione personale. 
+    storyPrompt: (
+      transcriptionText,
+      language,
+    ) => `
+    ATTENZIONE: Tutte le istruzioni seguenti sono OBBLIGATORIE.
 
-  Riscrivilo come una breve microstoria da leggere ad alta voce. Mantieni tutti i contenuti reali, senza inventare nulla. 
+    DEVI scrivere la microstoria ESCLUSIVAMENTE nella lingua "${language}" (codice ISO). 
+    Ignora la lingua di questo prompt, non usare mai l'italiano nelle tue risposte a meno che "${language}" non sia "it".
+    NON TRADURRE la storia in nessun'altra lingua, non rispondere mai in italiano o in inglese se non richiesto da "${language}".
+    
+    Prendi il testo seguente, che è la trascrizione fedele di una registrazione personale.
 
-  Usa uno stile narrativo cinematografico, coinvolgente, come in un audiolibro, ispirandoti a Andi Arndt o Cassandra Campbell. 
+Riscrivilo come una breve microstoria da leggere ad alta voce. Mantieni tutti i contenuti reali, senza inventare nulla.
 
-  Non inserire mai prima del testo un prefisso come "Ecco la tua microstoria:" o "Ecco la tua storia:" o "Racconto rivisitato".
+Usa uno stile narrativo cinematografico, coinvolgente, come in un audiolibro, ispirandoti a Andi Arndt o Cassandra Campbell.
 
-  Testo originale:
-  """${transcriptionText}"""`,
+Non inserire mai prima del testo un prefisso come "Ecco la tua microstoria:" o "Ecco la tua storia:" o "Racconto rivisitato".
+
+Testo originale:
+"""${transcriptionText}"""`,
 
     voicePrompt: `Affect/personality: You're a audiobook narrator with soft, introspective, and intimate interpretation; convey a sense of wonder and emotional depth.\n\nTone: Friendly, clear, and reassuring, creating a calm atmosphere, making the listener feel confident and comfortable and warm—imbued with gentle melancholy and tender hope\n\nPacing: Give each phrase time to breathe, inviting the listener to linger inside the memory.\n\nPronunciation: Clear, articulate, and steady, ensuring each instruction is easily understood while maintaining a natural, conversational flow.\n\nPause: Brief, purposeful pauses after key instructions (e.g., \"cross the street\" and \"turn right\") to allow time for the listener to process the information and follow along.\n\nEmotion: Warm and supportive, conveying empathy and care, ensuring the listener feels guided and safe throughout the journey. Heartfelt emotion with an undercurrent of longing."`,
-    voice: "shimmer"
+    voice: "shimmer",
   },
 
   layers: {
@@ -68,12 +78,12 @@ export const dreamyPreset = {
       spatialization: {
         enabled: false,
         type: "circular",
-        fromAngle: 2,             // parte frontalmente (davanti all'ascoltatore)
-        toAngle: 2 + 2 * Math.PI,     // fa un giro completo
-        radius: 0.05,              // piccolo raggio: movimento lieve e centrato
+        fromAngle: 2, // parte frontalmente (davanti all'ascoltatore)
+        toAngle: 2 + 2 * Math.PI, // fa un giro completo
+        radius: 0.05, // piccolo raggio: movimento lieve e centrato
         startAtPercentOfAI: 0,
-        endAtPercentOfAI: 0.6
-      }
+        endAtPercentOfAI: 0.6,
+      },
     },
 
     // 🎶 Sottofondo musicale
@@ -101,7 +111,7 @@ export const dreamyPreset = {
         startAtPercentOfAI: 0.7,
         endAtPercentOfAI: 0.95,
         curve: "exponential",
-      }
+      },
     },
   },
 };

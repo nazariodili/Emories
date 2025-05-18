@@ -13,11 +13,12 @@ dotenv.config();
  * @param {string} model - (opzionale) modello GPT da usare (default: gpt-4)
  * @returns {Promise<string>} - Titolo generato oppure fallback
  */
-export async function generateTitleFromStory(fullStory, folderPath, model = "gpt-4o-mini") {
+export async function generateTitleFromStory(fullStory, folderPath, language, model = "gpt-4.1-nano") {
   const prompt = `
 Il seguente testo è una microstoria personale.
-Genera un titolo evocativo, di massimo 5 parole.
+Genera un titolo evocativo, di massimo 5 parole **nella la lingua "${language}" (codice ISO)**.
 Evita virgolette, punti finali o preamboli.
+
 
 Testo:
 ${fullStory}

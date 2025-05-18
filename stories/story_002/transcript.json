@@ -1,0 +1,73 @@
+{
+  "task": "transcribe",
+  "language": "english",
+  "duration": 22.260000228881836,
+  "text": "Three years ago I met Andrea, we found that we really love to spend time together. After three years now we live together and we are planning to get married next year.",
+  "segments": [
+    {
+      "id": 0,
+      "seek": 0,
+      "start": 0,
+      "end": 11,
+      "text": " Three years ago I met Andrea, we found that we really love to spend time together.",
+      "tokens": [
+        50364,
+        6244,
+        924,
+        2057,
+        286,
+        1131,
+        24215,
+        11,
+        321,
+        1352,
+        300,
+        321,
+        534,
+        959,
+        281,
+        3496,
+        565,
+        1214,
+        13,
+        50914
+      ],
+      "temperature": 0,
+      "avg_logprob": -0.3763955235481262,
+      "compression_ratio": 1.4152542352676392,
+      "no_speech_prob": 0.010422713123261929
+    },
+    {
+      "id": 1,
+      "seek": 0,
+      "start": 11,
+      "end": 21,
+      "text": " After three years now we live together and we are planning to get married next year.",
+      "tokens": [
+        50914,
+        2381,
+        1045,
+        924,
+        586,
+        321,
+        1621,
+        1214,
+        293,
+        321,
+        366,
+        5038,
+        281,
+        483,
+        5259,
+        958,
+        1064,
+        13,
+        51414
+      ],
+      "temperature": 0,
+      "avg_logprob": -0.3763955235481262,
+      "compression_ratio": 1.4152542352676392,
+      "no_speech_prob": 0.010422713123261929
+    }
+  ]
+}

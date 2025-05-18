@@ -7,16 +7,28 @@ const __dirname = path.dirname(__filename);
 
 const STORIES_DIR = path.join(__dirname, '../../stories');
 
-// ✅ Crea nuova cartella story_XXX
+// ✅ Crea nuova cartella story_XXX con numerazione sempre crescente (no riuso buchi)
 export function createNewStoryFolder() {
   if (!fs.existsSync(STORIES_DIR)) {
     fs.mkdirSync(STORIES_DIR, { recursive: true });
   }
 
-  const existing = fs.readdirSync(STORIES_DIR).filter(name => name.startsWith('story_'));
-  const newId = String(existing.length + 1).padStart(3, '0');
+  // Trova tutti i numeri delle cartelle esistenti (es: story_001 → 1)
+  const existing = fs.readdirSync(STORIES_DIR)
+    .filter(name => name.startsWith('story_'))
+    .map(name => parseInt(name.replace('story_', ''), 10))
+    .filter(num => !isNaN(num));
+
+  // Calcola il nuovo numero: se nessuna cartella, parti da 1. Altrimenti, max + 1
+  const newNum = existing.length === 0 ? 1 : Math.max(...existing) + 1;
+  const newId = String(newNum).padStart(3, '0');
   const storyId = `story_${newId}`;
   const folderPath = path.join(STORIES_DIR, storyId);
+
+  // Se la cartella esiste già, lancia errore (teoricamente impossibile)
+  if (fs.existsSync(folderPath)) {
+    throw new Error(`La cartella ${folderPath} esiste già!`);
+  }
 
   fs.mkdirSync(folderPath);
   return { storyId, folderPath };
@@ -52,3 +64,23 @@ export function getAvailablePresets() {
     .map(name => path.basename(name, '.js'));
 }
 
+// 🗑️ Elimina l'intera cartella di una storia (ricorsivo)
+export function deleteStoryFolder(storyId) {
+  const folderPath = path.join(STORIES_DIR, storyId);
+  if (!fs.existsSync(folderPath)) return false;
+
+  // Funzione ricorsiva di eliminazione
+  function deleteRecursive(curPath) {
+    if (fs.lstatSync(curPath).isDirectory()) {
+      fs.readdirSync(curPath).forEach(file => {
+        const entryPath = path.join(curPath, file);
+        deleteRecursive(entryPath);
+      });
+      fs.rmdirSync(curPath);
+    } else {
+      fs.unlinkSync(curPath);
+    }
+  }
+  deleteRecursive(folderPath);
+  return true;
+}

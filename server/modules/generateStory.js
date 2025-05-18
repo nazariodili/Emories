@@ -4,25 +4,32 @@ import fetch from "node-fetch";
 import dotenv from "dotenv";
 dotenv.config();
 
+
+
 export async function generateNarrativeFrom(
   transcriptionText,
   outputFolderPath,
   model = "gpt-4",
+  language,
   customPrompt,
 ) {
   const prompt =
     customPrompt ||
-    `
-Prendi il testo seguente, che è la trascrizione fedele di una registrazione personale.
-Riscrivilo come una breve microstoria da leggere ad alta voce.
-Mantieni tutti i contenuti reali, senza inventare nulla.
-Usa uno stile narrativo cinematografico, coinvolgente, come in un audiolibro, ispirandoti a Andi Arndt o Cassandra Campbell.
-Non inserire mai prefissi tipo "Ecco la tua storia:".
+    `Scrivi: ""Errore di generazione, non ho caricato il preset" nella lingua "${language}" (codice ISO)..
 
 Testo originale:
 """${transcriptionText}"""
 `;
 
+  // DEBUG: parametri ricevuti
+  console.log(">>> CALL generateNarrativeFrom", {
+    transcriptionText,
+    outputFolderPath,
+    model,
+    language,
+    customPrompt,
+  });
+  
   // DEBUG: prompt effettivo
   console.log("🚩 PROMPT FINALE PASSATO A GPT:", prompt);
 

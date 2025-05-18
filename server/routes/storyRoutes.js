@@ -4,7 +4,7 @@ import path from 'path';
 import multer from 'multer';
 import { fileURLToPath } from 'url';
 
-import { createNewStoryFolder, saveFile, saveJSON } from '../utils/fileManager.js';
+import { createNewStoryFolder, saveFile, saveJSON, deleteStoryFolder } from '../utils/fileManager.js';
 import { transcribeAudio } from '../modules/transcribe.js';
 import { generateTitleFromStory } from '../modules/generateTitle.js';
 import { extractFirst10Seconds } from '../modules/extractVoiceSnippet.js';
@@ -80,32 +80,44 @@ router.post('/', upload.single('audio'), async (req, res) => {
     const originalWebmPath = path.join(folderPath, 'audio_utente.webm');
     saveFile(folderPath, 'audio_utente.webm', req.file.buffer);
 
-    // 2. Trascrive l'audio
-    const { text: transcriptionText } = await transcribeAudio(originalWebmPath, folderPath);
+    // 2. Trascrive l'audio e prepara il language
+    const { text: transcriptionText, language } = await transcribeAudio(originalWebmPath, folderPath);
 
-    // 3. Estrai primi 10s della voce utente
+    // 3. SALVA SUBITO i metadata principali, inclusa la lingua
+    //    In questo modo saranno già disponibili per la generazione storia
+    const metadata = {
+      id: storyId,
+      date: new Date().toISOString(),
+      preset: 'dreamy',
+      duration: null,
+      language,
+      transcriptionPath: path.join(folderPath, 'trascrizione.txt'),
+      audioPath: path.join(folderPath, 'audio_utente.mp3')
+    };
+    saveJSON(folderPath, 'metadata.json', metadata);
+
+    // 4. Estrai primi 10s della voce utente
     const trimmedPath = path.join(folderPath, 'voce_utente_trimmed.mp3');
     extractFirst10Seconds(originalWebmPath, trimmedPath);
 
-    // 4. Importa preset dreamy (prima versione automatica)
+    // 5. Importa preset dreamy (prima versione automatica)
     const { dreamyPreset } = await import("../../presets/dreamy.js");
 
-    // 5. Genera storia completa da preset dreamy
+    // 6. Genera storia completa da preset dreamy
     const result = await generateStoryFromPreset(storyId, dreamyPreset);
 
-    // 6. Genera titolo evocativo
+    // 7. Genera titolo evocativo nella lingua corretta e aggiorna i metadata
     const storyText = fs.readFileSync(result.storyPath, 'utf-8');
-    const title = await generateTitleFromStory(storyText, folderPath);
 
-    // 7. Scrive metadata principali
-    const metadata = {
-      id: storyId,
-      title,
-      date: new Date().toISOString(),
-      preset: 'dreamy',
-      duration: null
-    };
+    // 🔑 Recupera la lingua dai metadata salvati
+    const meta = JSON.parse(fs.readFileSync(path.join(folderPath, "metadata.json"), "utf-8"));
+
+    // ⚡️ Genera il titolo passando la lingua rilevata
+    const title = await generateTitleFromStory(storyText, folderPath, language);
+
+    metadata.title = title; // aggiorna i metadata esistenti
     saveJSON(folderPath, 'metadata.json', metadata);
+
 
     console.timeEnd("⏱️ TOT → creazione storia");
     res.status(201).json({ id: storyId });
@@ -152,5 +164,22 @@ router.post('/:id/generate-version/:presetName', async (req, res) => {
     res.status(500).json({ error: 'Errore durante la generazione della versione' });
   }
 });
+
+
+// 🗑️ DELETE /api/stories/:id → elimina una storia
+router.delete('/:id', (req, res) => {
+  const { id } = req.params;
+  try {
+    const success = deleteStoryFolder(id);
+    if (!success) {
+      return res.status(404).json({ error: "Storia non trovata" });
+    }
+    res.json({ success: true, message: "Storia eliminata" });
+  } catch (err) {
+    console.error("Errore durante eliminazione:", err);
+    res.status(500).json({ error: "Errore durante l'eliminazione della storia" });
+  }
+});
+
 
 export default router;

@@ -35,7 +35,7 @@ export async function transcribeAudio(inputFile, outputFolderPath) {
   formData.append("file", fs.createReadStream(convertedPath));
   formData.append("model", "whisper-1");
   formData.append("response_format", "verbose_json"); // <-- ATTENZIONE: 'verbose_json' per segmenti!
-  formData.append("language", "it");
+  // formData.append("language", "it");
 
   const response = await fetch("https://api.openai.com/v1/audio/transcriptions", {
     method: "POST",
@@ -56,6 +56,10 @@ export async function transcribeAudio(inputFile, outputFolderPath) {
   const whisperResult = await response.json();
   console.log("✅ Trascrizione ricevuta:", JSON.stringify(whisperResult, null, 2).slice(0, 200) + "...");
 
+  // 🌍 Lingua rilevata
+  console.log("🌍 Lingua rilevata:", whisperResult.language);
+
+
   // Salva la trascrizione con segmenti (per sync testo-audio)
   const transcriptPath = path.join(outputFolderPath, "transcript.json");
   fs.writeFileSync(transcriptPath, JSON.stringify(whisperResult, null, 2), "utf-8");
@@ -70,6 +74,7 @@ export async function transcribeAudio(inputFile, outputFolderPath) {
   return {
     transcript: whisperResult,   // Oggetto JSON con segmenti e timing
     text: whisperResult.text,    // Solo testo per uso GPT
+    language: whisperResult.language, // lingua rilevata
     convertedPath                // Percorso mp3 eventualmente convertito
   };
 }

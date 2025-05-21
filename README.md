@@ -1,168 +1,114 @@
+# 🎧 Emories – README aggiornato (maggio 2025)
 
-# 🎧 Emories – README aggiornato (maggio 2025)
-
-Questa versione aggiornata dell'app **Emories multistoria** supporta:
-
-- registrazione e generazione autonoma di ogni storia
-- voce AI narrante con mix audio dinamico (voce utente + AI + sottofondo)
-- preset audio selezionabili
-- timeline interattiva + evidenziazione testo sincronizzata
-- effetto **binaurale simulato** sulla voce AI (spatializzazione circolare)
-- sottofondo audio compatibile con **audio binaurale**
-- prompt ottimizzato per **voce narrante emozionale** tramite `synthesizeVoice.js`
-- **hard prompting multilingua**: la lingua della microstoria e del titolo è ora forzata tramite istruzioni forti all’inizio, nel mezzo e in fondo al prompt, garantendo la corretta generazione nella lingua della registrazione (vedi dettagli sotto)
+> **Ultimo aggiornamento:** 25 maggio 2025  – Fix riverbero library‑samples, preset alignment e prompt narrativi
 
 ---
 
-## ✅ Funzionalità principali
+## 🚀 Panoramica
 
-1. **Registrazione audio** (voce utente)
-2. **Trascrizione automatica** con OpenAI Whisper (con rilevamento lingua)
-3. **Generazione microstoria** narrativa con GPT (prompt dinamico, hard prompting lingua)
-4. **Sintesi vocale AI** della microstoria (`voce_ai.mp3`)
-   - tramite `synthesizeVoice.js` con `instructions` ottimizzate per ottenere una narrazione emozionale e immersiva
-5. **Estrazione transcript sincronizzato** (`transcript.json`)
-6. **Player narrativo multitraccia** con Tone.js:
-   - 10s voce utente
-   - 1s pausa
-   - voce AI narrante (con panning 3D)
-   - sottofondo binaurale in loop
-7. **Preset audio** dinamici:
-   - controlli separati per voce utente, AI e sottofondo
-   - filtro lowpass, riverbero, volumi, automazioni
-   - spatializzazione circolare della voce AI con `Panner3D`
-8. **Testo sincronizzato**:
-   - scroll e highlight riga per riga
-   - scroll centrato solo quando la riga attiva supera la metà visibile
-   - centramento fluido sia avanti che indietro
-9. **Hard prompting multilingua**:
-   - Il prompt passato a GPT, sia per la storia che per il titolo, include istruzioni forti, ridondanti e imperative per obbligare il modello a generare **sempre** nella lingua della registrazione.
-   - Vengono specificati comportamenti “critici” in caso di risposta nella lingua sbagliata.
-   - Il prompt ripete la richiesta di lingua più volte, sia all’inizio che alla fine, e spiega chiaramente cosa NON fare (ad esempio, non usare l’italiano se la lingua è inglese, ecc.).
+Emories è un’esperienza narrativa audio che prende una tua registrazione, la trasforma in una *microstoria* emozionale narrata da una voce AI e la arricchisce con un mix sonoro cinematografico.
+
+Questo repo contiene **frontend (Vanilla JS + Tone.js)** e **backend (Node + Express)** necessari per registrare, trascrivere, generare, sintetizzare e riprodurre ogni storia.
 
 ---
 
-## 🔧 Fix tecnici recenti
+## ✅ Funzionalità chiave
 
-### ✅ Hard prompting multilingua nei preset
-- Tutti i preset adottano prompt “imperativi” che forzano GPT a scrivere la microstoria nella lingua della registrazione.
-- Anche la generazione dei titoli usa ora la stessa logica, garantendo titoli evocativi e localizzati nella lingua giusta.
+1. **Registrazione utente** (webm → mp3)
+2. **Trascrizione Whisper** con rilevamento lingua
+3. **Generazione microstoria GPT** (hard‑prompting multilingua)
+4. **Sintesi vocale AI** (`voce_ai.mp3`) emozionale
+5. **Creazione transcript sincronizzato** (`transcript.json`)
+6. **Player multitraccia Tone.js**:
 
-### ✅ Generazione storie multi-preset
-- Prompt dinamico per ogni preset, injection della lingua, bug fixed per la coerenza tra storia generata e lingua della registrazione.
-
-### ✅ Scroll sincronizzato perfetto
-- Scroll centrato **solo se la riga attiva cambia**
-- Funziona sia avanti che indietro nella timeline
-- Usa `getBoundingClientRect()` per calcolo preciso
-- Scorrimento morbido personalizzato (`easeInOutQuad`)
-
-### ✅ Aggiunta spatializzazione AI
-- Effetto binaurale tramite `Tone.Panner3D` (HRTF)
-- Movimento circolare controllato da preset (startAngle, endAngle, radius)
-
-### ✅ Prompt ottimizzato per TTS
-- Il file `synthesizeVoice.js` ora include istruzioni dettagliate per voce emozionale.
+   * 10 s voce utente ➜ 1 s pausa ➜ voce AI (spatializzata) ➜ sottofondo loop
+7. **Preset audio** completamente configurabili (volumi, riverberi, filtri, automazioni, panning 3D)
+8. **Sync testo↔audio** con evidenziazione riga e scroll fluido
+9. **Sound‑library injection**: effetti ambientali (pioggia, scimmia, uccello) inseriti in timeline secondo le parole chiave rilevate nel testo
 
 ---
 
-## 📁 Struttura cartelle
+## 🔧 Fix tecnici recenti (v50)
 
-```
-/public/
-   index.html
-   story.html
-   registrazione.html
-   record.js
-   audioEngine.js
-   syncText.js
+|  #  |  Fix                                                                                                                                     |  File/Modulo                                                                |
+| --- | ---------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+|  1  | **Trigger suoni ambientali stabile** – integrazione `findSoundTriggers()`, pre‑load player, `player.sync().start()`                      | `audioEngine.js`, `findSoundTriggers.js`                                    |
+|  2  | **Eliminato errore *buffer not loaded*** all’avvio dei sample                                                                            | `audioEngine.js`                                                            |
+|  3  | **Avvio sicuro dell’AudioContext**: `Tone.start()` solo dopo gesto utente                                                                | `audioEngine.js`                                                            |
+|  4  | **Volume sample** portato a default ‑15 dB                                                                                               | Preset vari                                                                 |
+|  5  | **Logging dettagliato** sulla timeline (“⏱️ Schedulato…”)                                                                                | `audioEngine.js`                                                            |
+|  6  | **Riverbero library‑samples ora udibile**: rivisto routing wet/dry, default `wet: 0.7`, `decay: 4` se non specificato                    | `audioEngine.js`, presets                                                   |
+|  7  | **Preset uniformati**: allineati `dreamy.js`, `drama.js`, `lofi.js` ai nuovi parametri (volume, riverbero, fade‑out automations)         | cartella `presets/`                                                         |
+|  8  | **Prompt narrativi migliorati**: più fluidità e varietà per preset *dreamy* e *drama* (inserite frasi di transizione e verbi sensoriali) | `dreamyPreset.generation.storyPrompt`, `dramaPreset.generation.storyPrompt` |
 
-/server/
-   index.js
-   routes/storyRoutes.js
-   modules/
-      transcribe.js
-      generateStory.js
-      generateTitle.js
-      synthesizeVoice.js
-      generateTranscriptFromAudio.js
-      extractVoiceSnippet.js
-   utils/
-      fileManager.js
-      generateStoryFromPreset.js
+---
 
-/presets/
-   dreamy.js
-   drama.js
+## 📁 Struttura progetto
 
-/stories/
-   story_001/
-      preset_dreamy/
-         testo.txt
-         transcript.json
-         trascrizione.txt
-         voce_ai.mp3
-      audio_utente.webm
-      audio_utente.mp3
-      voce_utente_trimmed.mp3
-      transcript.json
-      metadata.json
-      titolo.txt
-      trascrizione.txt
+```text
+/public
+  ├─ index.html
+  ├─ story.html                # player
+  ├─ record.html               # pagina di registrazione
+  ├─ audioEngine.js            # motore di mix
+  ├─ syncText.js               # evidenziazione testo
+  ├─ presets/
+  │    ├─ dreamy.js            # preset esempio
+  │    ├─ drama.js             # preset drammatico
+  │    └─ …
+  └─ audio/library_normalized/ # sound‑library (mp3 normalizzati)
+/server
+  ├─ index.js                  # Express
+  ├─ routes/
+  ├─ modules/
+  │    ├─ transcribe.js
+  │    ├─ generateStory.js
+  │    ├─ synthesizeVoice.js
+  │    └─ …
+  └─ utils/
+/stories
+  └─ story_<id>/               # cartella per ogni storia generata
 ```
 
 ---
 
-## 📦 Prossimi passi
+## 📝 Sound‑Library Injection (workflow rapido)
 
-- [ ] **Injection nel mix di suoni basata sui timestamp della trascrizione:**  
-      Aggiungere la possibilità di inserire automaticamente suoni (da una sound library) nel mix audio in corrispondenza di specifici timestamp rilevati dalla transcript.  
-      - Dovrà essere gestita la **probabilità di injection** di ciascun suono (es: non sempre lo stesso suono ogni volta che ricorre un trigger).
-      - Bisognerà garantire la coerenza del mix: quando viene iniettato un suono, il volume del sottofondo del preset va abbassato in modo proporzionale per non sovrapporre troppo i layer.
-      - Logging e debug sulle injection e test di comportamento per evitare conflitti tra suoni ed effetti audio già presenti.
-- [ ] Agigungere il nome della persona loggata per inject dentro il prompt per storie in terza persona, altrimenti il GPT è costretto ad inventare nomi
-- [ ] Migliorare la voce registrata da utente
-- [ ] Migliorare narrazione e testo generato
-- [ ] Aumentare l’effetto emozionale dell’esperienza audio
-- [ ] Creare nuovi preset alternativi (ASMR, docu, drama...)
-- [ ] Ottimizzare performance complessive
+1. **Parsing transcript** → `findSoundTriggers(segments)` restituisce gli hit di parole‑chiave.
+2. **Pre‑load player** al setup (scarica buffer in anticipo).
+3. **Scheduling sample** con `sync().start(offset)` ➜ sample‑accurate.
+4. **Riverbero**: catena dry/wet interna al sample (adesso con `wetGain` 70 %).
+
+### Parametri di mix consigliati
+
+|  Parametro     |  Default |  Note                                |
+| -------------- | -------- | ------------------------------------ |
+| `volume`       |  ‑15 dB  | sepolto sotto la voce? alza a ‑12 dB |
+| `reverb.decay` |  4 s     | max 24 s per suoni atmosferici       |
+| `reverb.wet`   |  0.7     | 0.3‑0.8 secondo gusto                |
 
 ---
 
-## 💬 Prompt per riprendere la conversazione
+## 🛠 Installazione rapida
 
+```bash
+npm install
+npm run dev
 ```
-Sto lavorando a Emories, un'app per creare esperienze audio narrative personalizzate. Ora i prompt per GPT (storia e titolo) usano hard prompting per forzare la lingua della registrazione e garantire risultati localizzati. 
-Prossimi obiettivi: injection dinamica di suoni su timestamp dal transcript, miglioramento qualità emotiva della voce utente e nuovi preset audio immersivi. 
-Aiutami a proseguire con questi obiettivi.
-```
+
+`.env` ➜ `OPENAI_API_KEY=sk‑xxxx…`
 
 ---
 
-## 🛠 Requisiti per installazione su Replit
+## 🔮 Roadmap breve
 
-1. Crea un nuovo progetto **Node.js** su Replit
-2. Carica tutti i file del progetto (es. ZIP completo)
-3. Installa le dipendenze:
-
-   ```
-   npm install express openai node-fetch formidable
-   ```
-
-4. Verifica che esista un file `.env` con la tua chiave OpenAI:
-
-   ```
-   OPENAI_API_KEY=sk-xxxxxxxx
-   ```
-
-5. Avvia il progetto:
-
-   ```
-   npm start
-   ```
-
-6. Visita l’URL generato da Replit per usare l’app
+* [ ] **Ducking dinamico**: abbassa sottofondo durante i sample
+* [ ] Adattare *tutti* i preset legacy (`fantasy`, `sciFi`, `noir`) al nuovo schema riverbero/volume
+* [ ] **Prompt library**: set frasi di apertura/chiusura randomizzate per aumentare varietà
+* [ ] Refinement preset *dreamy* / *drama*: riduzione ripetizioni, inserimento verbi sensoriali, coesione narrativa
+* [ ] Export **.wav** opzionale (qualità lossless)
+* [ ] PWA offline‑ready
 
 ---
 
-Buona narrazione! 🌙
+> *“Le storie non sono nei ricordi, ma nel modo in cui le raccontiamo.”*

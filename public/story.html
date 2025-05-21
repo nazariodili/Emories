@@ -152,8 +152,14 @@
         const transcript = await fetch(
           `/stories/${storyId}/preset_${presetName}/transcript.json`,
         ).then((res) => res.json());
+
+        if (!transcript || !Array.isArray(transcript.segments)) {
+          storyTextDiv.innerText = "❌ Transcript mancante o non valido!";
+          return;
+        }
+        
         setupSyncText("storyText", transcript.segments, startDelay);
-        setupNarrationSequenceToneJS(storyId, preset);
+        setupNarrationSequenceToneJS(storyId, preset, transcript);
       }
 
       // ▶️ Avvia preset iniziale
